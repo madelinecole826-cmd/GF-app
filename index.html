@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gluten-Free Finder</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"></script>
+</head>
+<body>
+  <h1>Gluten-Free Restaurants Near Me</h1>
+  <ul id="restaurants"></ul>
+
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(fetchRestaurants);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function fetchRestaurants(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      fetch(`/restaurants?lat=${lat}&lng=${lng}`)
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById("restaurants");
+          list.innerHTML = "";
+          data.forEach(r => {
+            const item = document.createElement("li");
+            item.textContent = `${r.name} - ${r.address} (Rating: ${r.rating || "N/A"})`;
+            list.appendChild(item);
+          });
+        });
+    }
+
+    getLocation();
+  </script>
+</body>
+</html>
